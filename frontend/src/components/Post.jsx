@@ -8,13 +8,21 @@ import { useEffect, useState } from "react";
 import useShowToast from "../hooks/useShowToast";
 
 import { formatDistanceToNow } from 'date-fns'
+import { DeleteIcon } from "@chakra-ui/icons";
+import { useRecoilState, useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
+import postsAtom from "../atoms/postsAtom";
 
 function Post({ post, postedBy }) {
     const [user, setUser] = useState(null)
+    const [posts, setPosts] = useRecoilState(postsAtom);
     const showToast = useShowToast();
     const navigate = useNavigate();
-
+    const currentUser = useRecoilValue(userAtom)
+    console.log(postedBy)
+    
     //fetch user
+
     useEffect(() => {
         const getUser = async () => {
             try {
@@ -35,12 +43,31 @@ function Post({ post, postedBy }) {
     }, [postedBy, showToast])
 
 
+    const handleDeletePost = async (e) => {
+        try {
+            e.preventDefault()
+            if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+            const res = await fetch(`/api/posts/${post._id}`, {
+                method: "DELETE"
+            })
+            const data = await res.json();
+            if (data.error) {
+                showToast('Error', data.error, 'error')
+                return
+            }
+            showToast('Success', "Post deleted!", 'success')
+            setPosts(posts.filter((p) => p._id !== post._id))
+        } catch (error) {
+            showToast('Error', error, 'error')
+        }
+    }
 
     if (!user) return null
 
     return (
         <div>
-            <Link to={`/${user.username}/post/${post._id}}`}>
+            <Link to={`/${user.username}/post/${post._id}`}>
 
                 <Flex gap={3} mb={4} py={5}>
                     <Flex flexDirection={"column"} alignItems={"center"}>
@@ -110,6 +137,7 @@ function Post({ post, postedBy }) {
                                 <Text fontSize={"xs"} color={"gray.light"} textAlign={'right'} whiteSpace={'nowrap'}>
                                     {formatDistanceToNow(new Date(post.createdAt))} ago
                                 </Text>
+                                {currentUser?._id === user._id && <DeleteIcon size={20} onClick={handleDeletePost} />}
                             </Flex>
                         </Flex>
                         <Text fontSize={"small"}>{post.text}</Text>
@@ -126,7 +154,7 @@ function Post({ post, postedBy }) {
                             <Actions post={post} />
                         </Flex>
 
-                      
+
 
                     </Flex>
                 </Flex>

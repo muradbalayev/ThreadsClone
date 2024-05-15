@@ -4,35 +4,19 @@ import { useParams } from 'react-router-dom';
 import useShowToast from '../hooks/useShowToast';
 import { Flex, Spinner } from '@chakra-ui/react';
 import Post from '../components/Post';
+import useGetUserProfile from '../hooks/useGetUserProfile';
+import { useRecoilState } from 'recoil';
+import postsAtom from '../atoms/postsAtom';
 
 function UserPage() {
-    const [user, setUser] = useState(null);
-
+    const { user, loading } = useGetUserProfile();
     const { username } = useParams();
+    const [posts, setPosts] = useRecoilState(postsAtom)
+    const [fetchingPosts, setFetchingPosts] = useState(true)
+    
     const showToast = useShowToast();
 
-    const [loading, setLoading] = useState(true);
-    const [posts, setPosts] = useState([]);
-    const [fetchingPosts, setFetchingPosts] = useState(true)
-
     useEffect(() => {
-        const getUser = async () => {
-            try {
-                const res = await fetch(`/api/users/profile/${username}`)
-                const data = await res.json();
-                console.log(data)
-                if (data.error) {
-                    showToast('Error', data.error, 'error')
-                    return;
-                }
-                setUser(data);
-            } catch (error) {
-                showToast('Error', error, 'error')
-            } finally {
-                setLoading(false)
-            }
-        }
-
         const getPosts = async () => {
             setFetchingPosts(true)
             try {
@@ -41,16 +25,16 @@ function UserPage() {
                 console.log(data)
                 setPosts(data);
             } catch (error) {
-                showToast('Error', error, 'error')
-                setPosts([])
+                showToast('Error', error, 'error');
+                setPosts([]);
             } finally {
-                setFetchingPosts(false)
+                setFetchingPosts(false);
             }
         }
 
-        getUser();
         getPosts();
-    }, [username, showToast])
+    }, [username, showToast, setPosts])
+
 
     if (!user && loading) {
         return (
@@ -67,12 +51,12 @@ function UserPage() {
             {!fetchingPosts && posts.length == 0 && <h1>User has not posts!</h1>}
             {fetchingPosts && (
                 <Flex justifyContent={'center'} my={12}>
-                    <Spinner size={'xl'}/>
+                    <Spinner size={'xl'} />
                 </Flex>
             )}
 
             {posts.map((post) => (
-                <Post key={post._id} post={post} postedBy={post.postedBy} />
+                <Post key={post._id} post={post} postedBy={post.postedBy}/>
             ))}
         </>
     )

@@ -3,23 +3,26 @@ import { Button, CloseButton, Flex, FormControl, Image, Input, Modal, ModalBody,
 import { useRef, useState } from 'react'
 import usePreviewImg from '../hooks/usePreviewImg'
 import { BsFillImageFill } from "react-icons/bs";
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../atoms/userAtom';
 import useShowToast from '../hooks/useShowToast';
+import postsAtom from '../atoms/postsAtom';
+import { useParams } from 'react-router-dom';
 
 function CreatePost() {
 
-    //Inputda qalmisam time- 5:07:32
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [postText, setPostText] = useState('')
     const imageRef = useRef(null)
     const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
-    const [ loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [posts, setPosts] = useRecoilState(postsAtom)
+    const user = useRecoilValue(userAtom);
+    const { username } = useParams();
 
     const MAX_CHARACTER = 500
     const [remainingCharacter, setRemainingCharacter] = useState(MAX_CHARACTER)
 
-    const user = useRecoilValue(userAtom);
     const showToast = useShowToast();
     const handleTextChange = (e) => {
         const inputText = e.target.value;
@@ -36,30 +39,33 @@ function CreatePost() {
 
     const handleCreatePost = async () => {
         setLoading(true);
-   try {
-    const res = await fetch("/api/posts/create", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ postedBy: user._id, text: postText, img: imgUrl })
-    })
+        try {
+            const res = await fetch("/api/posts/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ postedBy: user._id, text: postText, img: imgUrl })
+            })
 
-    const data = await res.json();
-    if (data.error) {
-        showToast('Error', data.error, 'error')
-        return
-    }
+            const data = await res.json();
+            if (data.error) {
+                showToast('Error', data.error, 'error')
+                return;
+            }
 
-    showToast('Success', "Post created successfully!", 'success')
-    onClose()
-    setPostText("")
-    setImgUrl("")
-   } catch (error) {
-    showToast('Error', error, "error")
-   } finally {
-    setLoading(false)
-   }
+            showToast('Success', "Post created successfully!", 'success')
+            if (username === user.username) {
+                setPosts([data, ...posts])
+            }
+            onClose()
+            setPostText("")
+            setImgUrl("")
+        } catch (error) {
+            showToast('Error', error, "error")
+        } finally {
+            setLoading(false)
+        }
     }
     return (
 
@@ -67,12 +73,12 @@ function CreatePost() {
             <Button
                 position={'fixed'}
                 bottom={10}
-                right={10}
-                leftIcon={<AddIcon />}
+                right={5}
                 bg={useColorModeValue("gray.300", "gray.dark")}
                 onClick={onOpen}
+                size={{ base: "sm", sm: 'md' }}
             >
-                Post
+                <AddIcon />
             </Button>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
