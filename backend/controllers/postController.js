@@ -8,8 +8,12 @@ const createPost = async (req, res) => {
         const { postedBy, text } = req.body;
         let { img } = req.body;
 
-        if (!postedBy || !text) {
-            res.status(400).json({ error: "PostedBy and text fields are required" })
+        if (!postedBy) {
+            return res.status(400).json({ error: "PostedBy required" })
+        }
+
+        if (!text) {
+            return res.status(400).json({ error: "Text field required" })
         }
 
         const user = await User.findById(postedBy);
@@ -34,7 +38,7 @@ const createPost = async (req, res) => {
         const newPost = new Post({ postedBy, text, img });
 
         await newPost.save();
-        res.status(201).json({ message: ' Post created succesfully!', newPost })
+        res.status(201).json(newPost)
 
     } catch (err) {
         res.status(500).json({ error: err.message })
@@ -52,10 +56,10 @@ const getPost = async (req, res) => {
             return res.status(404).json({ error: "Post not found!" })
         }
 
-        res.status(200).json({ post })
+        res.status(200).json(post)
 
     } catch (err) {
-        res.status(500).json({ message: err.message })
+        res.status(500).json({ error: err.message })
     }
 }
 
@@ -70,6 +74,11 @@ const deletePost = async (req, res) => {
 
         if (post.postedBy.toString() !== req.user._id.toString()) {
             return res.status(401).json({ error: "Unauthorized to delete post!" })
+        }
+
+        if (post.img) {
+            const imgId = post.img.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(imgId)
         }
 
         await Post.findByIdAndDelete(req.params.postId);
@@ -133,7 +142,7 @@ const replyPost = async (req, res) => {
         post.replies.push(reply);
         await post.save();
 
-        res.status(200).json({ message: "Reply added successfully!", post })
+        res.status(200).json(reply)
 
 
     } catch (err) {
