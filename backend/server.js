@@ -3,13 +3,13 @@ import dotenv from 'dotenv'
 import connectDB from './db/connectDB.js';
 import userRoutes from './routes/userRoutes.js'
 import postRoutes from './routes/postRoutes.js'
+import messageRoutes from './routes/messageRoutes.js'
 import cookieParser from 'cookie-parser';
-import {v2 as cloudinary} from 'cloudinary'
-
+import { v2 as cloudinary } from 'cloudinary'
+import { app, server } from './socket/socket.js';
 dotenv.config();
 
 connectDB();
-const app = express();
 
 const PORT = process.env.PORT || 5000
 
@@ -19,7 +19,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET
 })
 
-app.use(express.json({limit:"50mb"})); // To parse Json data in the request.body
+app.use(express.json({ limit: "50mb" })); // To parse Json data in the request.body
 app.use(express.urlencoded({ extended: true })); // To parse form data in the request.body
 app.use(cookieParser());
 
@@ -27,5 +27,6 @@ app.use(cookieParser());
 // Routes
 app.use("/api/users", userRoutes)
 app.use("/api/posts", postRoutes)
+app.use("/api/messages", messageRoutes)
 
-app.listen(5000, () => console.log(`server started ad localhost:${PORT}`)) 
+server.listen(5000, () => console.log(`server started ad localhost:${PORT}`)) 
