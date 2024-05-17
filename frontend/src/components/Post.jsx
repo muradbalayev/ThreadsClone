@@ -19,7 +19,6 @@ function Post({ post, postedBy }) {
     const showToast = useShowToast();
     const navigate = useNavigate();
     const currentUser = useRecoilValue(userAtom)
-    console.log(postedBy)
     
     //fetch user
 
@@ -123,7 +122,7 @@ function Post({ post, postedBy }) {
                         gap={2}>
                         <Flex justifyContent={"space-between"} w={"full"}>
                             <Flex w={"full"} alignItems={"center"}>
-                                <Text fontSize={"small"} fontWeight={"bold"}
+                                <Text fontSize={"small"} fontWeight={"bold"} cursor={'pointer'}
                                     onClick={(e) => {
                                         e.preventDefault();
                                         navigate(`/${user.username}`)

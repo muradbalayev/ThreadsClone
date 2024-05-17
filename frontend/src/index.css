@@ -10,3 +10,15 @@ transition: background-color 0.3s ease;
     color: white;
     background-color: #1e1e1e;
 }
+
+::-webkit-scrollbar{
+    width: 7px;
+}
+
+::-webkit-scrollbar-track{
+    background-color: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb{
+    background-color: #555;
+}

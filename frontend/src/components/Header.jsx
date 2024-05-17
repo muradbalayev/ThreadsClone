@@ -7,6 +7,7 @@ import { Link as RouterLink } from 'react-router-dom'
 import { FiLogOut } from 'react-icons/fi';
 import useLogout from '../hooks/useLogout';
 import authScreenAtom from '../atoms/authAtom';
+import { BsFillChatQuoteFill } from 'react-icons/bs';
 function Header() {
     const { colorMode, toggleColorMode } = useColorMode();
     const user = useRecoilValue(userAtom)
@@ -35,9 +36,12 @@ function Header() {
                 onClick={toggleColorMode} />
 
             {user && (
-                <Flex gap={1} alignItems={'center'}>
+                <Flex gap={3} alignItems={'center'}>
                     <RouterLink to={`/${user.username}`}>
                         <RxAvatar size={26} />
+                    </RouterLink>
+                    <RouterLink to={`/chat`}>
+                        <BsFillChatQuoteFill size={20} />
                     </RouterLink>
                     <Button onClick={logout} size={'xs'}>
                         <FiLogOut size={18} />
