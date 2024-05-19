@@ -7,59 +7,16 @@ import { useToast } from '@chakra-ui/react'
 import { useRecoilValue } from "recoil"
 import userAtom from "../atoms/userAtom"
 import { Link as RouterLink } from "react-router-dom"
-import { useState } from "react"
-import useShowToast from "../hooks/useShowToast"
+import useFollowUnFollow from "../hooks/useFollowUnFollow"
 
 
 function UserHeader({ user }) {
     const toast = useToast()
+
     const currentUser = useRecoilValue(userAtom) // This is the user logged in
-    const [following, setFollowing] = useState(user.followers.includes(currentUser?._id))
+   const { handleFollowUnfollow, updating, following  } = useFollowUnFollow(user)
 
-
-    const showToast = useShowToast();
-    const [updating, setUpdating] = useState(false);
-
-    const handleFollowUnfollow = async () => {
-        if (!currentUser) {
-            showToast('Error', 'Please login to follow!')
-            return;
-        }
-        if (updating) return;
-        setUpdating(true);
-        try {
-            const res = await fetch(`/api/users/follow/${user._id}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-            const data = await res.json();
-            if (data.error) {
-                showToast('Error', data.error, 'error')
-                return;
-            }
-
-
-            if (following) {
-                showToast('Success', `${user.name} unfollowed!`, 'success')
-                user.followers.pop();
-            } else {
-                showToast('Success', `${user.name} followed!`, 'success')
-                user.followers.push(currentUser?._id)
-            }
-
-            setFollowing(!following)
-
-
-
-        } catch (error) {
-            showToast('Error', error, 'error')
-        } finally {
-            setUpdating(false)
-        }
-    }
-
+ 
     const copyURL = () => {
         const currentURL = window.location.href;
         navigator.clipboard.writeText(currentURL).then(() => {
@@ -88,10 +45,18 @@ function UserHeader({ user }) {
                     </Flex>
                 </Box>
                 <Box>
-                    {user.profilePic && (
+                    {user.profilePic ? (
                         <Avatar
                             name={user.name}
                             src={user.profilePic}
+                            size={{
+                                base: "lg",
+                                md: "xl"
+                            }}
+                        />
+                    ) : (
+                        <Avatar
+                            src=''
                             size={{
                                 base: "lg",
                                 md: "xl"

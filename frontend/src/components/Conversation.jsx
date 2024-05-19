@@ -1,6 +1,7 @@
 import {
     Avatar,
     AvatarBadge,
+    Box,
     Flex,
     Image,
     Stack,
@@ -11,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom"
-import { BsCheck2All } from 'react-icons/bs'
+import { BsCheck2All, BsFillImageFill } from 'react-icons/bs'
 import { selectedConversationAtom } from "../atoms/conversationsAtom";
 
 function Conversation({ conversation, isOnline }) {
@@ -57,12 +58,16 @@ function Conversation({ conversation, isOnline }) {
                 <Text cursor={'pointer'} fontWeight={"700"} display={"flex"} alignItems={"center"}>
                     {user.username} <Image src="/verified.png" w={4} h={4} ml={1} />
                 </Text>
-                <Text cursor={'pointer'} whiteSpace={'nowrap'} fontSize={"xs"} display={"flex"} alignItems={"center"} gap={1}>
-                    {currentUser._id === lastMessage.sender ? <BsCheck2All size={16} /> : ''}
+                <Flex cursor={'pointer'} whiteSpace={'nowrap'} fontSize={"xs"} display={"flex"} alignItems={"center"} gap={1}>
+                    {currentUser._id === lastMessage.sender ? (
+                        <Box color={lastMessage.seen ? "blue.400" : ""}>
+                            <BsCheck2All size={16} />
+                        </Box>
+                    ) : ''}
                     {lastMessage.text.length > 18
-                        ? lastMessage.text.substring(0, 18) + "..."
-                        : lastMessage.text}
-                </Text>
+                        ? lastMessage.text.substring(0, 18) + "..." : lastMessage.text ||
+                        <BsFillImageFill size={14}/>}
+                </Flex>
             </Stack>
         </Flex>
     );

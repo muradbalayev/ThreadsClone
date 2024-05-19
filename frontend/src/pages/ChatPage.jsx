@@ -20,6 +20,25 @@ const ChatPage = () => {
     const showToast = useShowToast()
     const { socket, onlineUsers } = useSocket()
 
+    useEffect(() => {
+        socket?.on("messagesSeen", ({ conversationId }) => {
+            setConversations(prev => {
+                const updatedConversations = prev.map(conversation => {
+                    if (conversation._id === conversationId) {
+                        return {
+                            ...conversation,
+                            lastMessage: {
+                                ...conversation.lastMessage,
+                                seen: true
+                            }
+                        }
+                    }
+                    return conversation
+                })
+                return updatedConversations
+            })
+        })
+    }, [socket, setConversations])
 
     useEffect(() => {
         const getConversations = async () => {
@@ -47,6 +66,12 @@ const ChatPage = () => {
         try {
             const res = await fetch(`/api/users/profile/${searchText}`)
             const searchedUser = await res.json();
+            
+            if (searchText === "") {
+                showToast("Error", 'Please enter a username', "error")
+                return
+            }
+
             if (searchedUser.error) {
                 showToast("Error", searchedUser.error, "error")
                 return;
@@ -119,7 +144,7 @@ const ChatPage = () => {
                 }}
                     mx={'auto'}>
                     <Text fontWeight={700} color={useColorModeValue("gray.600", "gray.400")}>
-                        Your Conversations
+                        Contacts
                     </Text>
                     <form onSubmit={handleConversationSearch}>
                         <Flex alignItems={'center'} gap={2}>

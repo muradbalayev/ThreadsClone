@@ -18,11 +18,11 @@ function UserPage() {
 
     useEffect(() => {
         const getPosts = async () => {
+            if(!user) return;
             setFetchingPosts(true)
             try {
                 const res = await fetch(`/api/posts/user/${username}`)
                 const data = await res.json();
-                console.log(data)
                 setPosts(data);
             } catch (error) {
                 showToast('Error', error, 'error');
@@ -33,7 +33,7 @@ function UserPage() {
         }
 
         getPosts();
-    }, [username, showToast, setPosts])
+    }, [username, showToast, setPosts, user])
 
 
     if (!user && loading) {
@@ -43,12 +43,21 @@ function UserPage() {
             </Flex>
         )
     }
-    if (!user && !loading) return <h1>User not found!</h1>;
+    if (!user && !loading) return (
+        <Flex justifyContent={'center'}>
+        <h1 >User not found!</h1>
+        </Flex>
+    )
 
     return (
         <>
             <UserHeader user={user} />
-            {!fetchingPosts && posts.length == 0 && <h1>User has not posts!</h1>}
+            {!fetchingPosts && posts.length == 0 && (
+               <Flex mx={'auto'} p={5} justifyContent={'center'}>
+                   <h1 >User has not posts!</h1>
+
+               </Flex>
+            ) }
             {fetchingPosts && (
                 <Flex justifyContent={'center'} my={12}>
                     <Spinner size={'xl'} />

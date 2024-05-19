@@ -62,6 +62,36 @@ function PostPage() {
     }
   }
 
+  const handleDeleteReply = async (replyId) => {
+    try {
+      if (!window.confirm("Are you sure you want to delete this reply?")) return;
+
+      const res = await fetch(`/api/posts/${currentPost._id}/reply/${replyId}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+      if (data.error) {
+        showToast('Error', data.error, 'error');
+        return;
+      }
+
+      setPosts(posts.map(post => {
+        if (post._id === currentPost._id) {
+          return {
+            ...post,
+            replies: post.replies.filter(reply => reply._id !== replyId)
+          };
+        }
+        return post;
+      }));
+      showToast('Success', "Reply deleted!", 'success');
+    } catch (error) {
+      showToast('Error', error.message, 'error');
+    }
+  };
+
+
   if (!user && loading) {
     return (
       <Flex justifyContent={'center'}>
@@ -116,8 +146,10 @@ function PostPage() {
       <Divider my={4} />
       {currentPost.replies.map((reply) => (
         <Comment
-          key={posts._id}
+          key={reply._id}
           reply={reply}
+          isPostCreator={currentUser?._id === currentPost.postedBy} // Pass prop to Comment component
+          handleDeleteReply={handleDeleteReply} // Pass function to Comment component
           // If its last dont add divider
           lastReply={reply._id === currentPost.replies[currentPost.replies.length - 1]._id}
         />

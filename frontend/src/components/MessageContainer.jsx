@@ -7,17 +7,18 @@ import conversationsAtom, { selectedConversationAtom } from '../atoms/conversati
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import userAtom from '../atoms/userAtom'
 import { useSocket } from '../context/SocketContext'
+import messageSound from '../assets/sounds/message.mp3'
 
 const MessageContainer = () => {
-    const showToast = useShowToast()
-    const selectedConversation = useRecoilValue(selectedConversationAtom)
+    const showToast = useShowToast();
+    const selectedConversation = useRecoilValue(selectedConversationAtom);
     const [loadingMessages, setLoadingMessages] = useState(true);
     const [messages, setMessages] = useState([]);
-    const currentUser = useRecoilValue(userAtom)
+    const currentUser = useRecoilValue(userAtom);
     const { socket } = useSocket();
-    const setConversations = useSetRecoilState(conversationsAtom)
+    const setConversations = useSetRecoilState(conversationsAtom);
 
-    const messageRef = useRef(null)
+    const messageRef = useRef(null);
 
     useEffect(() => {
         socket.on("newMessage", (message) => {
@@ -26,6 +27,14 @@ const MessageContainer = () => {
                 setMessages((prevMessage) => [...prevMessage, message]);
             }
 
+            const sound = new Audio(messageSound);
+            sound.play();
+
+            if(!document.hasFocus()){
+                const sound = new Audio(messageSound);
+                sound.play();
+            }
+            
             setConversations((prev) => {
                 const updatedConversations = prev.map((conversation) => {
                     if (conversation._id === message.conversationId) {
@@ -45,6 +54,32 @@ const MessageContainer = () => {
         return () => socket.off("newMessage")
     }, [socket, selectedConversation, setConversations])
 
+    useEffect(() => {
+        const lastMessageIsFromOtherUser = messages.length && messages[messages.length - 1].sender !== currentUser._id;
+        if (lastMessageIsFromOtherUser) {
+            socket.emit("markMessagesAsSeen", {
+                conversationId: selectedConversation._id,
+                userId: selectedConversation.userId,
+            });
+        }
+
+        socket.on("messagesSeen", ({ conversationId }) => {
+            if (selectedConversation._id === conversationId) {
+                setMessages((prev) => {
+                    const updatedMessages = prev.map((message) => {
+                        if (!message.seen) {
+                            return {
+                                ...message,
+                                seen: true,
+                            };
+                        }
+                        return message;
+                    });
+                    return updatedMessages;
+                });
+            }
+        });
+    }, [socket, currentUser._id, messages, selectedConversation]);
 
     useEffect(() => {
         messageRef.current?.scrollIntoView({ behavior: "smooth" })

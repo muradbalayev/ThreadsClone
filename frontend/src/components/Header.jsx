@@ -8,11 +8,12 @@ import { FiLogOut } from 'react-icons/fi';
 import useLogout from '../hooks/useLogout';
 import authScreenAtom from '../atoms/authAtom';
 import { BsFillChatQuoteFill } from 'react-icons/bs';
+import { MdOutlineSettings } from 'react-icons/md';
 function Header() {
     const { colorMode, toggleColorMode } = useColorMode();
     const user = useRecoilValue(userAtom)
     const logout = useLogout();
-    const setAuthScreen =  useSetRecoilState(authScreenAtom);
+    const setAuthScreen = useSetRecoilState(authScreenAtom);
     return (
         <Flex justifyContent={"space-between"} mt={6} mb={12}>
             {user && (
@@ -21,8 +22,8 @@ function Header() {
                 </RouterLink>
             )}
             {!user && (
-                <RouterLink to={'/auth'} 
-                onClick={() => setAuthScreen('login')}>
+                <RouterLink to={'/auth'}
+                    onClick={() => setAuthScreen('login')}>
                     Login
                 </RouterLink>
             )}
@@ -43,14 +44,17 @@ function Header() {
                     <RouterLink to={`/chat`}>
                         <BsFillChatQuoteFill size={20} />
                     </RouterLink>
+                    <RouterLink to={`/settings`}>
+                        <MdOutlineSettings size={20} />
+                    </RouterLink>
                     <Button onClick={logout} size={'xs'}>
                         <FiLogOut size={18} />
                     </Button>
                 </Flex>
             )}
-             {!user && (
+            {!user && (
                 <RouterLink to={'/auth'}
-                onClick={() => setAuthScreen('signup')}>
+                    onClick={() => setAuthScreen('signup')}>
                     Sign Up
                 </RouterLink>
             )}
