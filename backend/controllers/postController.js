@@ -185,5 +185,33 @@ const getUserPosts = async (req, res) => {
     }
 }
 
+const deleteReply = async (req, res) => {
+    try {
+        const { postId, replyId } = req.params;
+        const userId = req.user._id;
 
-export { createPost, getPost, deletePost, LikeUnlikePost, replyPost, getFeedPosts, getUserPosts }
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ error: "Post not found!" });
+        }
+
+        // Check if the user is the creator of the post
+        if (post.postedBy.toString() !== userId.toString()) {
+            return res.status(401).json({ error: "Unauthorized to delete reply!" });
+        }
+
+        const reply = post.replies.id(replyId);
+        if (!reply) {
+            return res.status(404).json({ error: "Reply not found!" });
+        }
+
+        await Post.findByIdAndUpdate(postId, { $pull: { replies: { _id: replyId } } });
+
+        res.status(200).json({ message: "Reply deleted successfully!" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
+
+export { createPost, getPost, deletePost, deleteReply , LikeUnlikePost, replyPost, getFeedPosts, getUserPosts }
