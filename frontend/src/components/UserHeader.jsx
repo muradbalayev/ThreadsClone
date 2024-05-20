@@ -105,22 +105,14 @@ function UserHeader({ user }) {
                     </Box>
                 </Flex>
             </Flex>
-            <Flex w={"full"}>
-                <Flex flex={1}
-                    borderBottom={"1.5px solid white"}
+            <Flex w={"full"}
+                    borderBottom={"1.5px solid gray"}
                     pb={3}
                     justifyContent={"center"}
                     cursor={"pointer"}>
-                    <Text fontWeight={"bold"}>Threads</Text>
-                </Flex>
-                <Flex flex={1}
-                    borderBottom={"1px solid gray"}
-                    pb={3}
-                    justifyContent={"center"}
-                    cursor={"pointer"}
-                    color={"gray.light"}>
-                    <Text fontWeight={"bold"}>Replies</Text>
-                </Flex>
+                    <Text fontWeight={"bold"}>Posts</Text>
+                
+                
             </Flex>
         </VStack>
 

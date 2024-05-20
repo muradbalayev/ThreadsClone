@@ -3,7 +3,6 @@ import {
     AvatarBadge,
     Box,
     Flex,
-    Image,
     Stack,
     Text,
     WrapItem,
@@ -21,8 +20,6 @@ function Conversation({ conversation, isOnline }) {
     const currentUser = useRecoilValue(userAtom);
     const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversationAtom)
     const colorMode = useColorMode();
-
-    // console.log(selectedConversation)
     return (
         <Flex
             gap={4}
@@ -54,9 +51,9 @@ function Conversation({ conversation, isOnline }) {
                 </Avatar>
             </WrapItem>
 
-            <Stack direction={"column"} fontSize={"sm"}>
+            <Stack direction={"column"} fontSize={"sm"} p={1}>
                 <Text cursor={'pointer'} fontWeight={"700"} display={"flex"} alignItems={"center"}>
-                    {user.username} <Image src="/verified.png" w={4} h={4} ml={1} />
+                    {user.username}
                 </Text>
                 <Flex cursor={'pointer'} whiteSpace={'nowrap'} fontSize={"xs"} display={"flex"} alignItems={"center"} gap={1}>
                     {currentUser._id === lastMessage.sender ? (

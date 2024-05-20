@@ -42,10 +42,10 @@ function Header() {
                         <RxAvatar size={26} />
                     </RouterLink>
                     <RouterLink to={`/chat`}>
-                        <BsFillChatQuoteFill size={20} />
+                        <BsFillChatQuoteFill size={22} />
                     </RouterLink>
                     <RouterLink to={`/settings`}>
-                        <MdOutlineSettings size={20} />
+                        <MdOutlineSettings size={23} />
                     </RouterLink>
                     <Button onClick={logout} size={'xs'}>
                         <FiLogOut size={18} />

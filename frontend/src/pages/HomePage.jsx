@@ -54,8 +54,8 @@ function HomePage() {
                     <Spinner size={'xl'} />
                 </Flex>}
             {loading && (
-                [0, 1, 2, 3, 4, 5].map((_, i) => (
-                    <Flex key={i} gap={4} alignItems={'center'} p={'8'} borderRadius={'md'}>
+                [0, 1, 2, 3].map((_, i) => (
+                    <Flex key={i} gap={4} alignItems={'start'} p={'8'} borderRadius={'md'}>
                         <Box>
                             <SkeletonCircle size={'10'} />
                         </Box>
@@ -63,7 +63,7 @@ function HomePage() {
                         <Flex w={'full'} flexDirection={'column'} gap={3}>
                             <Skeleton h={'10px'} w={'80px'} />
                             <Skeleton h={'8px'} w={'100%'} />
-                            <Skeleton h={'8px'} w={'100%'} />
+                            <Skeleton h={'10px'} w={'100%'} />
                         </Flex>
                     </Flex>
                 ))

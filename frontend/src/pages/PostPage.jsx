@@ -106,7 +106,7 @@ function PostPage() {
     <>
       <Flex>
         <Flex w={"full"} alignItems={"center"} gap={3}>
-          <Avatar name='sad' src={user.profilePic} size={"md"} />
+          <Avatar src={user.profilePic} size={"md"} />
           <Flex alignItems={"center"}>
             <Text fontSize={'small'} fontWeight={"bold"}>{user.username}</Text>
             <Image w={4} h={4} ml={2} src="/verified.png" />

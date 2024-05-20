@@ -76,7 +76,6 @@ function Post({ post, postedBy }) {
                                 navigate(`/${user.username}`)
 
                             }}
-                            name={user?.name}
                             src={user?.profilePic} />
                         <Box w={"1px"} h={"full"} bg={"gray.light"} my={2}></Box>
                         <Box position={"relative"} w={"full"}>
@@ -84,9 +83,8 @@ function Post({ post, postedBy }) {
                             {post.replies[0] && (
                                 <Avatar
                                     size={"xs"}
-                                    name={post.replies[0].username}
-                                    src={post.replies[0]}
-                                    position={"absolute".userProfilePic}
+                                    src={post.replies[0].userProfilePic}
+                                    position={"absolute"}
                                     top={"px"}
                                     left={"12px"}
                                     padding={"2px"} />
@@ -95,7 +93,6 @@ function Post({ post, postedBy }) {
                             {post.replies[1] && (
                                 <Avatar
                                     size={"xs"}
-                                    name={post.replies[1].username}
                                     src={post.replies[1].userProfilePic}
                                     position={"absolute"}
                                     bottom={"10px"}
@@ -106,7 +103,6 @@ function Post({ post, postedBy }) {
                             {post.replies[2] && (
                                 <Avatar
                                     size={"xs"}
-                                    name={post.replies[2].username}
                                     src={post.replies[2].userProfilePic}
                                     position={"absolute"}
                                     bottom={"10px"}
